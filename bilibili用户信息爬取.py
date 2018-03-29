@@ -1,4 +1,4 @@
-from project import agent
+import agent
 import threading
 import requests,pymysql,json,time,random
 
