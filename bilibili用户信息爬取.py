@@ -1,4 +1,4 @@
-import agent
+from project import agent
 import threading
 import requests,pymysql,json,time,random
 
@@ -30,17 +30,19 @@ proxies = [
     {'http':'http://27.44.246.39:80'},
     {'http':'http://183.53.131.46:5853'},
     {'http':'http://106.42.23.167:808'},
-    {'http':'http://219.157.246.179:8998'}
+    {'http':'http://219.157.246.179:8998'},
+    {'http':'http://124.115.36.55:80'},
+    {'http':'http://114.99.1.228:808'},
+    {'http':'http://114.99.16.151:808'},
+    {'http':'http://114.99.19.131:808'},
+    {'http':'http://183.166.206.168:808'},
+    {'http':'http://115.46.84.176:8123'},
+    {'http':'http://221.229.18.200:3128'}
             ]
 formData = {'mid':1}
 url = 'https://space.bilibili.com/ajax/member/GetInfo'
 url1 = 'https://api.bilibili.com/x/relation/stat?'
 agents = agent.LoadUserAgents()
-
-def datetime_to_timestamp_in_milliseconds(d):
-    def current_milli_time():
-        return int(round(time.time() * 1000))
-    return current_milli_time()
 
 #爬虫程序
 def spider(mid):
@@ -72,7 +74,6 @@ def spider(mid):
             res2 = requests.session().get(url=url1,params={'vmid':mid,'jsonp':'jsonp'},headers=theheaders2,proxies=random.choice(proxies),timeout=2)
             js_fans_data = json.loads(res2.text)
             info['follower'] = js_fans_data['data']['follower']
-            print('mid:%s获取' % (mid))
         else:
             print('no data now')
 
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     # 连接数据库
     db = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='password', db='mypydb')
     lock = threading.Lock()
-    for i in range(0,10000):
+    for i in range(100,100000):
         try:
             threads = [threading.Thread(target=spider,args=(20*i+j,)) for j in range(1,21)]
             for thread in threads:
@@ -102,5 +103,5 @@ if __name__ == '__main__':
             for thread in threads:
                 thread.join()
         except:pass
-        time.sleep(8)
+        time.sleep(2)
     db.close()
